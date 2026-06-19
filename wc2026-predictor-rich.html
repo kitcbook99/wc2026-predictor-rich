@@ -708,6 +708,8 @@
           <input class="form-input" id="adminPwdDisplay" readonly>
         </div>
       </div>
+      <div class="alert alert-warning" style="font-size:13px">If matches are missing, click below to reload all group stage matches.</div>
+      <button class="btn btn-secondary btn-full" style="margin-bottom:12px" onclick="loadDefaultMatches()">↺ Reload All Group Stage Matches</button>
 
       <div class="section-title">Add New Match</div>
       <div class="card">
@@ -775,12 +777,107 @@ function saveDB(db) {
 function defaultDB() {
   const code = 'WC2026';
   const adminPwd = 'KITCADMIN99';
+  // All times converted to Bangkok (ICT = ET + 11h)
+  const matches = [
+    // ── Matchday 1 ──
+    // Jun 11
+    {id:1,  stage:'Group Stage', home:'Mexico',      away:'South Africa', date:'2026-06-12', time:'02:00', result:null, predictions:{}},
+    {id:2,  stage:'Group Stage', home:'South Korea', away:'Czechia',      date:'2026-06-12', time:'05:00', result:null, predictions:{}},
+    // Jun 12
+    {id:3,  stage:'Group Stage', home:'Canada',      away:'Bosnia & Herzegovina', date:'2026-06-13', time:'02:00', result:null, predictions:{}},
+    {id:4,  stage:'Group Stage', home:'USA',         away:'Paraguay',     date:'2026-06-13', time:'05:00', result:null, predictions:{}},
+    // Jun 13
+    {id:5,  stage:'Group Stage', home:'Qatar',       away:'Switzerland',  date:'2026-06-14', time:'02:00', result:null, predictions:{}},
+    {id:6,  stage:'Group Stage', home:'Brazil',      away:'Morocco',      date:'2026-06-14', time:'02:00', result:null, predictions:{}},
+    {id:7,  stage:'Group Stage', home:'Haiti',       away:'Scotland',     date:'2026-06-14', time:'05:00', result:null, predictions:{}},
+    // Jun 14
+    {id:8,  stage:'Group Stage', home:'Australia',   away:'Türkiye',      date:'2026-06-15', time:'02:00', result:null, predictions:{}},
+    {id:9,  stage:'Group Stage', home:'Germany',     away:'Curaçao',      date:'2026-06-15', time:'02:00', result:null, predictions:{}},
+    {id:10, stage:'Group Stage', home:'Netherlands', away:'Japan',        date:'2026-06-15', time:'02:00', result:null, predictions:{}},
+    {id:11, stage:'Group Stage', home:'Ivory Coast', away:'Ecuador',      date:'2026-06-15', time:'05:00', result:null, predictions:{}},
+    {id:12, stage:'Group Stage', home:'Sweden',      away:'Tunisia',      date:'2026-06-15', time:'05:00', result:null, predictions:{}},
+    // Jun 15
+    {id:13, stage:'Group Stage', home:'Spain',       away:'Cape Verde',   date:'2026-06-16', time:'02:00', result:null, predictions:{}},
+    {id:14, stage:'Group Stage', home:'Belgium',     away:'Egypt',        date:'2026-06-16', time:'02:00', result:null, predictions:{}},
+    {id:15, stage:'Group Stage', home:'Saudi Arabia',away:'Uruguay',      date:'2026-06-16', time:'02:00', result:null, predictions:{}},
+    {id:16, stage:'Group Stage', home:'Iran',        away:'New Zealand',  date:'2026-06-16', time:'05:00', result:null, predictions:{}},
+    // Jun 16
+    {id:17, stage:'Group Stage', home:'France',      away:'Senegal',      date:'2026-06-17', time:'02:00', result:null, predictions:{}},
+    {id:18, stage:'Group Stage', home:'Iraq',        away:'Norway',       date:'2026-06-17', time:'02:00', result:null, predictions:{}},
+    {id:19, stage:'Group Stage', home:'Argentina',   away:'Algeria',      date:'2026-06-17', time:'05:00', result:null, predictions:{}},
+    // Jun 17
+    {id:20, stage:'Group Stage', home:'Austria',     away:'Jordan',       date:'2026-06-18', time:'02:00', result:null, predictions:{}},
+    {id:21, stage:'Group Stage', home:'Portugal',    away:'DR Congo',     date:'2026-06-18', time:'02:00', result:null, predictions:{}},
+    {id:22, stage:'Group Stage', home:'England',     away:'Croatia',      date:'2026-06-18', time:'02:00', result:null, predictions:{}},
+    {id:23, stage:'Group Stage', home:'Ghana',       away:'Panama',       date:'2026-06-18', time:'02:00', result:null, predictions:{}},
+    {id:24, stage:'Group Stage', home:'Uzbekistan',  away:'Colombia',     date:'2026-06-18', time:'05:00', result:null, predictions:{}},
+    // ── Matchday 2 ──
+    // Jun 18
+    {id:25, stage:'Group Stage', home:'Czechia',     away:'South Africa', date:'2026-06-19', time:'02:00', result:null, predictions:{}},
+    {id:26, stage:'Group Stage', home:'Switzerland', away:'Bosnia & Herzegovina', date:'2026-06-19', time:'02:00', result:null, predictions:{}},
+    {id:27, stage:'Group Stage', home:'Canada',      away:'Qatar',        date:'2026-06-19', time:'06:00', result:null, predictions:{}},
+    {id:28, stage:'Group Stage', home:'Mexico',      away:'South Korea',  date:'2026-06-19', time:'09:00', result:null, predictions:{}},
+    // Jun 19
+    {id:29, stage:'Group Stage', home:'USA',         away:'Australia',    date:'2026-06-20', time:'02:00', result:null, predictions:{}},
+    {id:30, stage:'Group Stage', home:'Scotland',    away:'Morocco',      date:'2026-06-20', time:'05:00', result:null, predictions:{}},
+    {id:31, stage:'Group Stage', home:'Brazil',      away:'Haiti',        date:'2026-06-20', time:'07:30', result:null, predictions:{}},
+    {id:32, stage:'Group Stage', home:'Türkiye',     away:'Paraguay',     date:'2026-06-20', time:'10:00', result:null, predictions:{}},
+    // Jun 20
+    {id:33, stage:'Group Stage', home:'Netherlands', away:'Sweden',       date:'2026-06-21', time:'00:00', result:null, predictions:{}},
+    {id:34, stage:'Group Stage', home:'Germany',     away:'Ivory Coast',  date:'2026-06-21', time:'03:00', result:null, predictions:{}},
+    {id:35, stage:'Group Stage', home:'Ecuador',     away:'Curaçao',      date:'2026-06-21', time:'07:00', result:null, predictions:{}},
+    // Jun 21
+    {id:36, stage:'Group Stage', home:'Tunisia',     away:'Japan',        date:'2026-06-21', time:'11:00', result:null, predictions:{}},
+    {id:37, stage:'Group Stage', home:'Spain',       away:'Saudi Arabia', date:'2026-06-21', time:'23:00', result:null, predictions:{}},
+    {id:38, stage:'Group Stage', home:'Belgium',     away:'Iran',         date:'2026-06-22', time:'02:00', result:null, predictions:{}},
+    {id:39, stage:'Group Stage', home:'Uruguay',     away:'Cape Verde',   date:'2026-06-22', time:'05:00', result:null, predictions:{}},
+    {id:40, stage:'Group Stage', home:'New Zealand', away:'Egypt',        date:'2026-06-22', time:'08:00', result:null, predictions:{}},
+    // Jun 22
+    {id:41, stage:'Group Stage', home:'Argentina',   away:'Austria',      date:'2026-06-23', time:'00:00', result:null, predictions:{}},
+    {id:42, stage:'Group Stage', home:'France',      away:'Iraq',         date:'2026-06-23', time:'04:00', result:null, predictions:{}},
+    {id:43, stage:'Group Stage', home:'Norway',      away:'Senegal',      date:'2026-06-23', time:'07:00', result:null, predictions:{}},
+    {id:44, stage:'Group Stage', home:'Jordan',      away:'Algeria',      date:'2026-06-23', time:'10:00', result:null, predictions:{}},
+    // Jun 23
+    {id:45, stage:'Group Stage', home:'Portugal',    away:'Uzbekistan',   date:'2026-06-24', time:'00:00', result:null, predictions:{}},
+    {id:46, stage:'Group Stage', home:'England',     away:'Ghana',        date:'2026-06-24', time:'03:00', result:null, predictions:{}},
+    {id:47, stage:'Group Stage', home:'Panama',      away:'Croatia',      date:'2026-06-24', time:'06:00', result:null, predictions:{}},
+    {id:48, stage:'Group Stage', home:'Colombia',    away:'DR Congo',     date:'2026-06-24', time:'09:00', result:null, predictions:{}},
+    // ── Matchday 3 (simultaneous) ──
+    // Jun 24
+    {id:49, stage:'Group Stage', home:'Switzerland', away:'Canada',       date:'2026-06-25', time:'02:00', result:null, predictions:{}},
+    {id:50, stage:'Group Stage', home:'Bosnia & Herzegovina', away:'Qatar', date:'2026-06-25', time:'02:00', result:null, predictions:{}},
+    {id:51, stage:'Group Stage', home:'Scotland',    away:'Brazil',       date:'2026-06-25', time:'05:00', result:null, predictions:{}},
+    {id:52, stage:'Group Stage', home:'Morocco',     away:'Haiti',        date:'2026-06-25', time:'05:00', result:null, predictions:{}},
+    {id:53, stage:'Group Stage', home:'Czechia',     away:'Mexico',       date:'2026-06-25', time:'08:00', result:null, predictions:{}},
+    {id:54, stage:'Group Stage', home:'South Africa',away:'South Korea',  date:'2026-06-25', time:'08:00', result:null, predictions:{}},
+    // Jun 25
+    {id:55, stage:'Group Stage', home:'Curaçao',     away:'Ivory Coast',  date:'2026-06-26', time:'03:00', result:null, predictions:{}},
+    {id:56, stage:'Group Stage', home:'Ecuador',     away:'Germany',      date:'2026-06-26', time:'03:00', result:null, predictions:{}},
+    {id:57, stage:'Group Stage', home:'Japan',       away:'Sweden',       date:'2026-06-26', time:'06:00', result:null, predictions:{}},
+    {id:58, stage:'Group Stage', home:'Tunisia',     away:'Netherlands',  date:'2026-06-26', time:'06:00', result:null, predictions:{}},
+    {id:59, stage:'Group Stage', home:'Türkiye',     away:'USA',          date:'2026-06-26', time:'09:00', result:null, predictions:{}},
+    {id:60, stage:'Group Stage', home:'Paraguay',    away:'Australia',    date:'2026-06-26', time:'09:00', result:null, predictions:{}},
+    // Jun 26
+    {id:61, stage:'Group Stage', home:'Norway',      away:'France',       date:'2026-06-27', time:'02:00', result:null, predictions:{}},
+    {id:62, stage:'Group Stage', home:'Senegal',     away:'Iraq',         date:'2026-06-27', time:'02:00', result:null, predictions:{}},
+    {id:63, stage:'Group Stage', home:'Cape Verde',  away:'Saudi Arabia', date:'2026-06-27', time:'07:00', result:null, predictions:{}},
+    {id:64, stage:'Group Stage', home:'Uruguay',     away:'Spain',        date:'2026-06-27', time:'07:00', result:null, predictions:{}},
+    {id:65, stage:'Group Stage', home:'Egypt',       away:'Iran',         date:'2026-06-27', time:'10:00', result:null, predictions:{}},
+    {id:66, stage:'Group Stage', home:'New Zealand', away:'Belgium',      date:'2026-06-27', time:'10:00', result:null, predictions:{}},
+    // Jun 27
+    {id:67, stage:'Group Stage', home:'Panama',      away:'England',      date:'2026-06-28', time:'04:00', result:null, predictions:{}},
+    {id:68, stage:'Group Stage', home:'Croatia',     away:'Ghana',        date:'2026-06-28', time:'04:00', result:null, predictions:{}},
+    {id:69, stage:'Group Stage', home:'Colombia',    away:'Portugal',     date:'2026-06-28', time:'06:30', result:null, predictions:{}},
+    {id:70, stage:'Group Stage', home:'DR Congo',    away:'Uzbekistan',   date:'2026-06-28', time:'06:30', result:null, predictions:{}},
+    {id:71, stage:'Group Stage', home:'Algeria',     away:'Austria',      date:'2026-06-28', time:'09:00', result:null, predictions:{}},
+    {id:72, stage:'Group Stage', home:'Jordan',      away:'Argentina',    date:'2026-06-28', time:'09:00', result:null, predictions:{}},
+  ];
   return {
     groupCode: code,
     adminPassword: adminPwd,
-    players: {},      // { name: { pin, totalPts } }
-    matches: [],      // [ { id, stage, home, away, date, time, result, predictions } ]
-    nextMatchId: 1
+    players: {},
+    matches,
+    nextMatchId: 73
   };
 }
 
@@ -1267,6 +1364,24 @@ function deleteMatch(matchId) {
 
 function copyGroupCode() {
   navigator.clipboard.writeText(db.groupCode).then(() => showToast('Code copied! Share with players'));
+}
+
+function loadDefaultMatches() {
+  if (!confirm("This will reload all 72 group stage matches. Existing predictions will be kept. Continue?")) return;
+  const fresh = defaultDB();
+  // Merge: keep existing predictions on matching match ids
+  fresh.matches.forEach(fm => {
+    const existing = db.matches.find(m => m.id === fm.id);
+    if (existing && existing.predictions) fm.predictions = existing.predictions;
+    if (existing && existing.result) fm.result = existing.result;
+  });
+  db.matches = fresh.matches;
+  db.nextMatchId = fresh.nextMatchId;
+  saveDB(db);
+  showToast("All group stage matches loaded!");
+  renderAdminMatches();
+  renderStageFilter();
+  renderMatches();
 }
 
 // ═══════════════════════════════════════════════════
