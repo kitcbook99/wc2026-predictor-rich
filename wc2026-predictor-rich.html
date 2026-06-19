@@ -773,9 +773,8 @@ function saveDB(db) {
 }
 
 function defaultDB() {
-  // Generate a random 6-char group code
-  const code = Math.random().toString(36).substring(2,8).toUpperCase();
-  const adminPwd = 'ADMIN' + Math.floor(1000 + Math.random()*9000);
+  const code = 'WC2026';
+  const adminPwd = 'KITCADMIN99';
   return {
     groupCode: code,
     adminPassword: adminPwd,
