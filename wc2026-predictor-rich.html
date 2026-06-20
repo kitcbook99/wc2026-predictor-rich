@@ -66,14 +66,59 @@
   .form-input:focus{outline:none;border-color:var(--accent);}
   .form-select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:inherit;background:var(--surface);color:var(--text);appearance:none;}
   .form-hint{font-size:12px;color:var(--text-muted);margin-top:4px;}
-  .lb-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);gap:12px;}
-  .lb-row:last-child{border-bottom:none;}
-  .lb-rank{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;width:28px;text-align:center;flex-shrink:0;}
-  .lb-rank.top1{color:#D4A017;}.lb-rank.top2{color:#9CA3AF;}.lb-rank.top3{color:#CD7F32;}
-  .lb-name{flex:1;font-weight:500;font-size:15px;}
-  .lb-pts{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--accent);}
-  .lb-pts-label{font-size:12px;color:var(--text-muted);}
-  .lb-me{background:var(--accent-light);border-radius:8px;padding:12px;}
+  .lb-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .lb-table thead th{font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-muted);text-align:center;padding:0 4px 8px;border-bottom:1.5px solid var(--border);}
+  .lb-table thead th.col-player{text-align:left;}
+  .lb-table tbody td{padding:9px 4px;text-align:center;border-bottom:1px solid var(--border);}
+  .lb-table tbody tr:last-child td{border-bottom:none;}
+  .lb-table tbody tr.lb-me{background:var(--accent-light);}
+  .lb-table td.col-rank{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;width:24px;}
+  .lb-table td.col-rank.top1{color:#D4A017;}
+  .lb-table td.col-rank.top2{color:#9CA3AF;}
+  .lb-table td.col-rank.top3{color:#CD7F32;}
+  .lb-table td.col-player{text-align:left;font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:0;}
+  .lb-table td.col-player .you-tag{font-size:10px;color:var(--accent);font-weight:600;margin-left:3px;}
+  .lb-table td.col-e{color:var(--green);font-weight:600;}
+  .lb-table td.col-r{color:var(--gold);font-weight:600;}
+  .lb-table td.col-w{color:var(--red);font-weight:600;}
+  .lb-table td.col-pt{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--accent);}
+  .pred-summary-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;}
+  .pred-summary-title{font-size:14px;font-weight:600;}
+  .pred-summary-sub{font-size:12px;color:var(--text-muted);}
+  .pred-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+  .pred-row:last-child{border-bottom:none;}
+  .pred-row-name{font-size:14px;font-weight:500;}
+  .pred-row-score{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;}
+  .pred-row-extra{font-size:11px;color:var(--text-muted);margin-left:6px;font-weight:400;font-family:'Inter',sans-serif;}
+  .pred-no-pick{color:var(--text-muted);font-style:italic;font-size:13px;}
+  .pp-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);background:var(--surface);}
+  .pp-table{border-collapse:collapse;font-size:12px;white-space:nowrap;}
+  .pp-table th,.pp-table td{padding:8px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);text-align:center;}
+  .pp-table th:last-child,.pp-table td:last-child{border-right:none;}
+  .pp-table tbody tr:last-child td{border-bottom:none;}
+  .pp-table thead th{background:var(--bg);font-weight:600;position:sticky;top:0;z-index:2;}
+  .pp-table th.pp-col-match{text-align:left;position:sticky;left:0;z-index:3;background:var(--bg);min-width:148px;}
+  .pp-table td.pp-col-match{text-align:left;position:sticky;left:0;z-index:1;background:var(--surface);min-width:148px;}
+  .pp-table th.pp-player-col{min-width:74px;font-size:11px;}
+  .pp-table .pp-stage-label{display:block;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.03em;font-weight:600;}
+  .pp-table .pp-teams-label{font-size:12px;font-weight:600;color:var(--text);}
+  .pp-table .pp-time-label{font-size:10px;color:var(--text-muted);}
+  .pp-cell-score{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;}
+  .pp-cell-pts{display:block;font-size:9px;font-weight:600;margin-top:1px;}
+  .pp-cell-pts.pts-exact{color:var(--green);}
+  .pp-cell-pts.pts-partial{color:var(--gold);}
+  .pp-cell-pts.pts-wrong{color:var(--red);}
+  .pp-cell-nopick{color:var(--text-muted);font-size:14px;}
+  .pp-table tfoot td{font-weight:700;background:var(--bg);border-top:1.5px solid var(--border);}
+  .pp-table tfoot td.pp-col-match{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.03em;color:var(--text-muted);}
+  .pp-table tfoot .pp-total-pts{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--accent);}
+  .admin-player-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;}
+  .admin-player-row:last-child{border-bottom:none;}
+  .admin-player-info{display:flex;flex-direction:column;}
+  .admin-player-name{font-size:14px;font-weight:600;}
+  .admin-player-meta{font-size:12px;color:var(--text-muted);}
+  .btn-delete-player{background:var(--red-light);color:var(--red);border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0;}
+  .btn-delete-player:active{opacity:0.7;}
   .auth-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;background:var(--bg);}
   .auth-logo{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:700;letter-spacing:0.02em;margin-bottom:6px;}
   .auth-logo span{color:var(--accent);}
@@ -109,11 +154,22 @@
   .filter-tabs::-webkit-scrollbar{display:none;}
   .filter-tab{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);white-space:nowrap;font-family:inherit;transition:all 0.15s;}
   .filter-tab.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+  .date-strip{display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;}
+  .date-strip::-webkit-scrollbar{display:none;}
+  .date-pill{flex-shrink:0;min-width:58px;padding:7px 10px;border-radius:10px;text-align:center;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);font-family:inherit;transition:all 0.15s;}
+  .date-pill.active{border-color:var(--accent);background:var(--accent);}
+  .date-pill .dow{font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-muted);}
+  .date-pill.active .dow{color:rgba(255,255,255,0.8);}
+  .date-pill .dnum{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);line-height:1.1;}
+  .date-pill.active .dnum{color:#fff;}
+  .date-pill .dtoday{font-size:9px;font-weight:600;color:var(--accent);margin-top:1px;}
+  .date-pill.active .dtoday{color:rgba(255,255,255,0.9);}
   .loading-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
   .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   @media(max-width:380px){.team-name{font-size:14px;}.score-input{width:46px;height:40px;font-size:20px;}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -197,16 +253,35 @@
   </nav>
   <div class="main">
     <div id="page-matches" class="page active">
+      <div class="date-strip" id="dateStrip"></div>
       <div class="filter-tabs" id="stageFilter"></div>
       <div id="matchesList"></div>
     </div>
     <div id="page-leaderboard" class="page">
-      <div class="card">
-        <div class="card-header">Rankings</div>
-        <div id="leaderboardList"></div>
+      <div class="card" style="padding:16px 12px">
+        <div class="card-header" style="padding-left:4px">Rankings</div>
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th class="col-rank">#</th>
+              <th class="col-player">Player</th>
+              <th>E</th>
+              <th>R</th>
+              <th>W</th>
+              <th>Pt.</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardList"></tbody>
+        </table>
       </div>
       <div class="card mt-12">
-        <div class="card-header">Scoring Rules</div>
+        <div class="card-header">Legend</div>
+        <div class="pts-row"><span><strong>E</strong> — Exact score correct</span><span class="status-badge badge-correct">+3 pts</span></div>
+        <div class="pts-row"><span><strong>R</strong> — Result/winner correct only</span><span class="status-badge badge-partial">+1 pt</span></div>
+        <div class="pts-row"><span><strong>W</strong> — Wrong prediction</span><span class="status-badge badge-locked">0 pts</span></div>
+      </div>
+      <div class="card mt-12">
+        <div class="card-header">Full Scoring Rules</div>
         <div class="pts-row"><span>Exact score (90 min)</span><span class="status-badge badge-correct">+3 pts</span></div>
         <div class="pts-row"><span>Correct result only</span><span class="status-badge badge-partial">+1 pt</span></div>
         <div class="pts-row"><span>Knockout winner (bonus)</span><span class="status-badge badge-pts">+1 pt</span></div>
@@ -230,6 +305,10 @@
           <label class="form-label">Admin Password</label>
           <input class="form-input" id="adminPwdDisplay" readonly value="KITCADMIN99">
         </div>
+      </div>
+      <div class="section-title">Manage Players</div>
+      <div class="card">
+        <div id="adminPlayerList"></div>
       </div>
       <div class="section-title">Add New Match</div>
       <div class="card">
@@ -267,6 +346,30 @@
         </div>
         <button class="btn btn-primary btn-full" onclick="addMatch()">Add Match</button>
       </div>
+      <div class="section-title">Player Predictions</div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Stage</label>
+          <select class="form-select" id="predStageFilter" onchange="renderPredictionSummary()">
+            <option value="All">All Stages</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label class="form-label">From Date</label>
+            <input class="form-input" id="predDateFrom" type="date" onchange="renderPredictionSummary()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">To Date</label>
+            <input class="form-input" id="predDateTo" type="date" onchange="renderPredictionSummary()">
+          </div>
+        </div>
+        <div class="form-hint" id="predMatchCount" style="margin-top:-6px;margin-bottom:4px"></div>
+        <button class="btn btn-secondary btn-full btn-sm" onclick="clearPredictionFilters()">Clear Filters (show all matches)</button>
+      </div>
+      <div id="predictionSummary"></div>
+      <button class="btn btn-primary btn-full" id="exportPredBtn" style="margin-top:8px" onclick="exportPredictionTableAsJpeg()">📷 Export Table as JPEG</button>
+
       <div class="section-title">Enter Results</div>
       <div id="adminMatchList"></div>
     </div>
@@ -278,7 +381,7 @@
 <!-- Firebase SDKs -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAuPLzfBQdwO4mji_iiYR6OyOpmXdoq-RA",
@@ -489,11 +592,17 @@ function enterApp() {
   unsubMatches = onSnapshot(collection(db, 'matches'), snap => {
     matches = snap.docs.map(d => ({ id: d.id, ...d.data() }))
       .sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+    renderDateStrip();
     renderStageFilter();
     renderMatches();
     renderMyPredictions();
     renderLeaderboard();
-    if (currentUser.isAdmin) renderAdminMatches();
+    if (currentUser.isAdmin) {
+      renderAdminMatches();
+      renderAdminPlayerList();
+      renderPredictionMatchOptions();
+      renderPredictionSummary();
+    }
     updateCountdown();
   });
 
@@ -501,6 +610,11 @@ function enterApp() {
     players = {};
     snap.docs.forEach(d => { players[d.id] = d.data(); });
     renderLeaderboard();
+    if (currentUser.isAdmin) {
+      renderAdminPlayerList();
+      renderPredictionMatchOptions();
+      renderPredictionSummary();
+    }
   });
 
   startCountdown();
@@ -514,8 +628,78 @@ window.showPage = function(name, btn) {
   if (btn) btn.classList.add('active');
 };
 
-// ── STAGE FILTER ──
+// ── MATCH-DAY LOGIC ──
+// Each date tab = one calendar date in BANGKOK TIME (ICT, UTC+7), regardless of the player's device timezone.
+// EXCEPTION: the "Today" tab additionally includes tomorrow's matches that kick off 00:00–11:59,
+// shown under a "Tomorrow Morning" divider within the same list.
+function getMatchDayKey(match) { return match.date; }
+
+// Returns today's date string (YYYY-MM-DD) in Bangkok time, independent of the device's local timezone.
+function getTodayKey() {
+  const now = new Date();
+  // Get UTC time in ms, then add Bangkok's fixed UTC+7 offset.
+  const bangkokMs = now.getTime() + (7 * 60 * 60 * 1000) + (now.getTimezoneOffset() * 60 * 1000);
+  const bkk = new Date(bangkokMs);
+  const y = bkk.getFullYear();
+  const m = String(bkk.getMonth() + 1).padStart(2, '0');
+  const d = String(bkk.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function addDays(dateKey, n) {
+  const d = new Date(dateKey + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split('T')[0];
+}
+
+let activeDateKey = null; // set on first renderDateStrip call
 let activeFilter = 'All';
+let userHasPickedDate = false; // becomes true once the player manually taps a date pill
+
+// Finds the earliest matchday tab that still has at least one match open for prediction (not locked yet).
+// Falls back to today's key, then the first available tab, if nothing qualifies.
+function getDefaultDateKey(dayKeys) {
+  for (const key of dayKeys) {
+    const dayMatches = matches.filter(m => getMatchDayKey(m) === key);
+    if (dayMatches.some(m => !isPredictionLocked(m))) return key;
+  }
+  const cur = getTodayKey();
+  return dayKeys.includes(cur) ? cur : dayKeys[0];
+}
+
+function renderDateStrip() {
+  const el = document.getElementById('dateStrip');
+  const dayKeys = [...new Set(matches.map(m => getMatchDayKey(m)))].sort();
+  if (!dayKeys.length) { el.innerHTML=''; return; }
+
+  if (!userHasPickedDate && (activeDateKey === null || !dayKeys.includes(activeDateKey))) {
+    activeDateKey = getDefaultDateKey(dayKeys);
+  } else if (activeDateKey === null || !dayKeys.includes(activeDateKey)) {
+    const cur = getTodayKey();
+    activeDateKey = dayKeys.includes(cur) ? cur : dayKeys[0];
+  }
+
+  const todayKey = getTodayKey();
+  el.innerHTML = '';
+  dayKeys.forEach(key => {
+    const d = new Date(key + 'T12:00:00');
+    const dow = d.toLocaleDateString('en-US',{weekday:'short'});
+    const dnum = d.getDate();
+    const isToday = key === todayKey;
+    const btn = document.createElement('button');
+    btn.className = 'date-pill' + (key===activeDateKey?' active':'');
+    btn.innerHTML = `<div class="dow">${dow}</div><div class="dnum">${dnum}</div>${isToday?'<div class="dtoday">Today</div>':''}`;
+    btn.onclick = () => { activeDateKey = key; userHasPickedDate = true; renderDateStrip(); renderMatches(); };
+    el.appendChild(btn);
+  });
+
+  setTimeout(() => {
+    const activeBtn = el.querySelector('.date-pill.active');
+    if (activeBtn) activeBtn.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+  }, 50);
+}
+
+// ── STAGE FILTER ──
 function renderStageFilter() {
   const el = document.getElementById('stageFilter');
   const stages = ['All', ...new Set(matches.map(m => m.stage))];
@@ -529,14 +713,26 @@ function renderStageFilter() {
   });
 }
 
+// Returns current UTC timestamp (ms) - used as a timezone-neutral anchor for comparisons.
+function nowUtcMs() { return Date.now(); }
+
+// Converts a Bangkok-local "YYYY-MM-DDTHH:mm" string into a true UTC timestamp (ms).
+// Bangkok is fixed UTC+7 (no daylight saving).
+function bangkokToUtcMs(dateStr, timeStr) {
+  const [y, mo, d] = dateStr.split('-').map(Number);
+  const [hh, mm] = timeStr.split(':').map(Number);
+  // Date.UTC gives ms for that Y/M/D/H/M treated as UTC; subtract 7h to get the true UTC instant
+  // for a wall-clock time that was actually in Bangkok (UTC+7).
+  return Date.UTC(y, mo - 1, d, hh, mm) - (7 * 60 * 60 * 1000);
+}
+
 // ── LOCK LOGIC ──
 function isPredictionLocked(match) {
   const dayMatches = matches.filter(m => m.date === match.date);
   if (!dayMatches.length) return false;
   const earliest = dayMatches.reduce((a,b) => a.time < b.time ? a : b);
-  const lockDT = new Date(match.date + 'T' + earliest.time);
-  lockDT.setHours(lockDT.getHours() - 1);
-  return new Date() >= lockDT;
+  const lockMs = bangkokToUtcMs(match.date, earliest.time) - (60 * 60 * 1000); // 1 hour before kickoff
+  return nowUtcMs() >= lockMs;
 }
 
 function isKnockout(stage) { return KNOCKOUT_STAGES.includes(stage); }
@@ -546,16 +742,37 @@ const tempWinners = {};
 
 function renderMatches() {
   const el = document.getElementById('matchesList');
-  const filtered = activeFilter==='All' ? matches : matches.filter(m => m.stage===activeFilter);
-  if (!filtered.length) { el.innerHTML='<div class="empty"><div class="empty-icon">⚽</div>No matches yet.</div>'; return; }
-  const byDate = {};
-  filtered.forEach(m => { if (!byDate[m.date]) byDate[m.date]=[]; byDate[m.date].push(m); });
-  let html = '';
-  Object.entries(byDate).forEach(([date, ms]) => {
-    const d = new Date(date+'T12:00:00');
-    html += `<div class="section-title">${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>`;
-    ms.forEach(m => { html += renderMatchCard(m); });
+  if (activeDateKey === null) { el.innerHTML=''; return; }
+
+  let mainMatches = matches.filter(m => getMatchDayKey(m) === activeDateKey);
+  const tomorrowKey = addDays(activeDateKey, 1);
+  let tomorrowMorningMatches = matches.filter(m => {
+    if (m.date !== tomorrowKey) return false;
+    const hh = parseInt(m.time.split(':')[0], 10);
+    return hh < 12;
   });
+
+  if (activeFilter !== 'All') {
+    mainMatches = mainMatches.filter(m => m.stage===activeFilter);
+    tomorrowMorningMatches = tomorrowMorningMatches.filter(m => m.stage===activeFilter);
+  }
+
+  // Safeguard: ensure no match id appears in both lists (defensive de-dup)
+  const mainIds = new Set(mainMatches.map(m => m.id));
+  tomorrowMorningMatches = tomorrowMorningMatches.filter(m => !mainIds.has(m.id));
+
+  if (!mainMatches.length && !tomorrowMorningMatches.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">⚽</div>No matches for this date'+(activeFilter!=='All'?' in '+activeFilter:'')+'.</div>';
+    return;
+  }
+
+  const sortFn = (a,b) => (a.date+a.time).localeCompare(b.date+b.time);
+  let html = '';
+  mainMatches.sort(sortFn).forEach(m => { html += renderMatchCard(m); });
+  if (tomorrowMorningMatches.length) {
+    html += '<div class="section-title">Tomorrow Morning</div>';
+    tomorrowMorningMatches.sort(sortFn).forEach(m => { html += renderMatchCard(m); });
+  }
   el.innerHTML = html;
 }
 
@@ -642,18 +859,48 @@ function calcTotal(playerName) {
   return matches.reduce((sum,m) => sum + (m.result?calcPoints(m,playerName):0), 0);
 }
 
+// Returns { exact, resultOnly, wrong } counts of *settled* (results entered) predictions for a player.
+// "exact" = predicted exact score correctly (3 or 4 pts: 3 base + optional knockout bonus)
+// "resultOnly" = predicted correct win/draw/loss but not exact score (1 or 2 pts)
+// "wrong" = predicted but got both score and result wrong (0 pts) -- only counts matches they actually predicted
+function calcStats(playerName) {
+  let exact = 0, resultOnly = 0, wrong = 0;
+  matches.forEach(m => {
+    if (!m.result) return;
+    const pred = m.predictions ? m.predictions[playerName] : null;
+    if (!pred) return; // no prediction made = not counted in any bucket
+    const r = m.result;
+    if (pred.home===r.home && pred.away===r.away) {
+      exact++;
+    } else {
+      const res = r.home>r.away?'H':r.home<r.away?'A':'D';
+      const pre = pred.home>pred.away?'H':pred.home<pred.away?'A':'D';
+      if (res===pre) resultOnly++;
+      else wrong++;
+    }
+  });
+  return { exact, resultOnly, wrong };
+}
+
 // ── LEADERBOARD ──
 function renderLeaderboard() {
   const el = document.getElementById('leaderboardList');
   const list = Object.values(players)
-    .map(p => ({ name: p.displayName, pts: calcTotal(p.displayName) }))
+    .map(p => ({ name: p.displayName, pts: calcTotal(p.displayName), stats: calcStats(p.displayName) }))
     .sort((a,b) => b.pts-a.pts);
-  if (!list.length) { el.innerHTML='<div class="empty">No players yet.</div>'; return; }
+  if (!list.length) { el.innerHTML='<tr><td colspan="6" class="empty">No players yet.</td></tr>'; return; }
   el.innerHTML = list.map((p,i) => {
     const rank = i+1;
     const rc = rank===1?'top1':rank===2?'top2':rank===3?'top3':'';
     const isMe = p.name===currentUser.name;
-    return `<div class="lb-row${isMe?' lb-me':''}"><div class="lb-rank ${rc}">${rank}</div><div class="lb-name">${p.name}${isMe?' <span style="font-size:12px;color:var(--accent)">(you)</span>':''}</div><div><div class="lb-pts">${p.pts}</div><div class="lb-pts-label">pts</div></div></div>`;
+    return `<tr class="${isMe?'lb-me':''}">
+      <td class="col-rank ${rc}">${rank}</td>
+      <td class="col-player">${p.name}${isMe?' <span class="you-tag">YOU</span>':''}</td>
+      <td class="col-e">${p.stats.exact}</td>
+      <td class="col-r">${p.stats.resultOnly}</td>
+      <td class="col-w">${p.stats.wrong}</td>
+      <td class="col-pt">${p.pts}</td>
+    </tr>`;
   }).join('');
 }
 
@@ -705,6 +952,146 @@ function renderAdminMatches() {
   }).join('');
 }
 
+// ── ADMIN: PLAYER PREDICTIONS VIEWER (filtered by date range + stage, grouped by player) ──
+function renderPredictionMatchOptions() {
+  const sel = document.getElementById('predStageFilter');
+  if (!sel) return;
+  const prevValue = sel.value;
+  const stages = ['All', ...new Set(matches.map(m => m.stage))];
+  sel.innerHTML = stages.map(s => `<option value="${s}">${s==='All'?'All Stages':s}</option>`).join('');
+  sel.value = stages.includes(prevValue) ? prevValue : 'All';
+}
+
+window.clearPredictionFilters = function() {
+  document.getElementById('predStageFilter').value = 'All';
+  document.getElementById('predDateFrom').value = '';
+  document.getElementById('predDateTo').value = '';
+  renderPredictionSummary();
+};
+
+function getFilteredPredictionMatches() {
+  const stage = document.getElementById('predStageFilter')?.value || 'All';
+  const fromDate = document.getElementById('predDateFrom')?.value || '';
+  const toDate = document.getElementById('predDateTo')?.value || '';
+  let filtered = [...matches];
+  if (stage !== 'All') filtered = filtered.filter(m => m.stage === stage);
+  if (fromDate) filtered = filtered.filter(m => m.date >= fromDate);
+  if (toDate) filtered = filtered.filter(m => m.date <= toDate);
+  return filtered.sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+}
+
+function renderPredictionSummary() {
+  const el = document.getElementById('predictionSummary');
+  const countEl = document.getElementById('predMatchCount');
+  if (!el) return;
+
+  const filteredMatches = getFilteredPredictionMatches();
+  if (countEl) countEl.textContent = `${filteredMatches.length} match${filteredMatches.length===1?'':'es'} selected`;
+
+  if (!filteredMatches.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div>No matches match this filter.</div>';
+    return;
+  }
+
+  const allPlayers = Object.values(players).map(p => p.displayName).sort((a,b) => a.localeCompare(b));
+  if (!allPlayers.length) {
+    el.innerHTML = '<div class="empty">No players have joined yet.</div>';
+    return;
+  }
+
+  // Header row: blank corner + one column per player
+  const headerHtml = `<tr><th class="pp-col-match">Match</th>${allPlayers.map(name => `<th class="pp-player-col">${name}</th>`).join('')}</tr>`;
+
+  // One row per match
+  const bodyHtml = filteredMatches.map(m => {
+    const d = new Date(m.date+'T12:00:00');
+    const dStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const hasResult = m.result !== null && m.result !== undefined;
+    const matchCell = `<td class="pp-col-match"><span class="pp-stage-label">${m.stage} · ${dStr}</span><span class="pp-teams-label">${m.home} vs ${m.away}</span><span class="pp-time-label">${m.time}${hasResult?` · Result: ${m.result.home}–${m.result.away}`:''}</span></td>`;
+
+    const playerCells = allPlayers.map(name => {
+      const pred = m.predictions ? m.predictions[name] : null;
+      if (!pred) return `<td class="pp-cell-nopick">—</td>`;
+      let ptsHtml = '';
+      if (hasResult) {
+        const pts = calcPoints(m, name);
+        const cls = pts===0?'pts-wrong':pts===1?'pts-partial':'pts-exact';
+        const label = pts===0?'0 pt':pts===1?'+1 pt':`+${pts} pt`;
+        ptsHtml = `<span class="pp-cell-pts ${cls}">${label}</span>`;
+      } else if (pred.winner) {
+        ptsHtml = `<span class="pp-cell-pts" style="color:var(--text-muted)">→ ${pred.winner.slice(0,3).toUpperCase()}</span>`;
+      }
+      return `<td><span class="pp-cell-score">${pred.home}–${pred.away}</span>${ptsHtml}</td>`;
+    }).join('');
+
+    return `<tr>${matchCell}${playerCells}</tr>`;
+  }).join('');
+
+  // Footer row: total points per player across the filtered matches
+  const footerHtml = `<tr><td class="pp-col-match">Total (range)</td>${allPlayers.map(name => {
+    const total = filteredMatches.reduce((sum, m) => sum + (m.result ? calcPoints(m, name) : 0), 0);
+    return `<td class="pp-total-pts">${total}</td>`;
+  }).join('')}</tr>`;
+
+  el.innerHTML = `<div class="pp-table-wrap"><table class="pp-table">
+    <thead>${headerHtml}</thead>
+    <tbody>${bodyHtml}</tbody>
+    <tfoot>${footerHtml}</tfoot>
+  </table></div>`;
+}
+window.renderPredictionSummary = renderPredictionSummary;
+
+// ── EXPORT PREDICTION TABLE AS JPEG ──
+window.exportPredictionTableAsJpeg = async function() {
+  const wrap = document.querySelector('#predictionSummary .pp-table-wrap');
+  if (!wrap) { showToast('No table to export — adjust filters first'); return; }
+  if (typeof html2canvas === 'undefined') { showToast('Export tool failed to load. Check your connection.'); return; }
+
+  const btn = document.getElementById('exportPredBtn');
+  const origText = btn.textContent;
+  btn.textContent = '⏳ Generating image...';
+  btn.disabled = true;
+
+  // Clone the table off-screen, unconstrained width, so the FULL table (not just the visible scroll
+  // viewport) gets captured — including sticky-column visuals which we neutralize for a clean export.
+  const clone = wrap.cloneNode(true);
+  clone.style.overflow = 'visible';
+  clone.style.display = 'inline-block';
+  clone.querySelectorAll('.pp-col-match').forEach(elx => { elx.style.position = 'static'; });
+
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.top = '0';
+  container.style.left = '-99999px';
+  container.style.background = '#FFFFFF';
+  container.style.padding = '16px';
+  container.appendChild(clone);
+  document.body.appendChild(container);
+
+  try {
+    const canvas = await html2canvas(clone, {
+      backgroundColor: '#FFFFFF',
+      scale: 2,
+      useCORS: true
+    });
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    const newTab = window.open();
+    if (newTab) {
+      newTab.document.write(`<title>WC2026 Predictions Export</title><body style="margin:0;background:#f0f0f0;display:flex;justify-content:center"><img src="${dataUrl}" style="max-width:100%;height:auto"></body>`);
+      showToast('Image opened in new tab — long-press to save');
+    } else {
+      showToast('Please allow pop-ups to view the exported image');
+    }
+  } catch (err) {
+    console.error(err);
+    showToast('Export failed. Please try again.');
+  } finally {
+    document.body.removeChild(container);
+    btn.textContent = origText;
+    btn.disabled = false;
+  }
+};
+
 window.saveResult = async function(matchId) {
   const hVal = document.getElementById('rh-'+matchId)?.value;
   const aVal = document.getElementById('ra-'+matchId)?.value;
@@ -719,7 +1106,6 @@ window.clearResult = async function(matchId) {
 
 window.deleteMatch = async function(matchId) {
   if (!confirm('Delete this match?')) return;
-  const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
   await deleteDoc(doc(db,'matches',matchId));
   showToast('Match deleted');
 };
@@ -728,18 +1114,53 @@ window.copyGroupCode = function() {
   navigator.clipboard.writeText(GROUP_CODE).then(() => showToast('Code copied! Share: WC2026'));
 };
 
+// ── ADMIN: MANAGE PLAYERS ──
+function renderAdminPlayerList() {
+  const el = document.getElementById('adminPlayerList');
+  if (!el) return;
+  const list = Object.entries(players)
+    .map(([key, p]) => ({ key, name: p.displayName, pts: calcTotal(p.displayName) }))
+    .sort((a,b) => a.name.localeCompare(b.name));
+  if (!list.length) { el.innerHTML = '<div class="empty">No players have joined yet.</div>'; return; }
+  el.innerHTML = list.map(p => {
+    const predCount = matches.filter(m => m.predictions && m.predictions[p.name]).length;
+    return `<div class="admin-player-row">
+      <div class="admin-player-info">
+        <span class="admin-player-name">${p.name}</span>
+        <span class="admin-player-meta">${p.pts} pts · ${predCount} prediction${predCount===1?'':'s'}</span>
+      </div>
+      <button class="btn-delete-player" onclick="deletePlayer('${p.key}','${p.name.replace(/'/g,"\\'")}')">Remove</button>
+    </div>`;
+  }).join('');
+}
+
+window.deletePlayer = async function(playerKey, playerName) {
+  if (!confirm(`Remove ${playerName} from the game? This will permanently delete their account and all their predictions. This cannot be undone.`)) return;
+
+  showToast(`Removing ${playerName}...`);
+
+  // Strip this player's prediction field from every match that has one.
+  const matchesWithPred = matches.filter(m => m.predictions && m.predictions[playerName]);
+  for (const m of matchesWithPred) {
+    await updateDoc(doc(db, 'matches', m.id), { [`predictions.${playerName}`]: deleteField() });
+  }
+
+  // Delete the player's account doc.
+  await deleteDoc(doc(db, 'players', playerKey));
+
+  showToast(`${playerName} removed`);
+};
+
 // ── COUNTDOWN ──
 function startCountdown() { updateCountdown(); setInterval(updateCountdown, 30000); }
 function updateCountdown() {
   const bar = document.getElementById('countdownBar');
-  const now = new Date();
-  const today = now.toISOString().split('T')[0];
+  const today = getTodayKey();
   const todayMatches = matches.filter(m => m.date===today && !m.result);
   if (!todayMatches.length) { bar.style.display='none'; return; }
   const earliest = todayMatches.reduce((a,b) => a.time<b.time?a:b);
-  const lockDT = new Date(today+'T'+earliest.time);
-  lockDT.setHours(lockDT.getHours()-1);
-  const diff = lockDT - now;
+  const lockMs = bangkokToUtcMs(today, earliest.time) - (60*60*1000);
+  const diff = lockMs - nowUtcMs();
   bar.style.display='';
   if (diff<=0) { bar.textContent="🔒 Predictions locked for today's matches"; return; }
   const mins = Math.floor(diff/60000);
