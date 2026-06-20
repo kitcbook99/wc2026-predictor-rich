@@ -118,6 +118,12 @@
   .admin-player-name{font-size:14px;font-weight:600;}
   .admin-player-meta{font-size:12px;color:var(--text-muted);}
   .btn-delete-player{background:var(--red-light);color:var(--red);border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0;}
+  .ss-cell{font-weight:700;font-size:12px;border-radius:6px;padding:4px 6px !important;}
+  .ss-cell.ss-full{background:var(--green-light);color:var(--green);}
+  .ss-cell.ss-partial{background:var(--gold-light);color:var(--gold);}
+  .ss-cell.ss-none{background:var(--red-light);color:var(--red);}
+  .ss-cell.ss-me{outline:2px solid var(--accent);outline-offset:-2px;}
+  .pp-table th.ss-date-col{min-width:54px;font-size:10px;}
   .btn-delete-player:active{opacity:0.7;}
   .auth-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;background:var(--bg);}
   .auth-logo{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:700;letter-spacing:0.02em;margin-bottom:6px;}
@@ -274,6 +280,13 @@
           <tbody id="leaderboardList"></tbody>
         </table>
       </div>
+      <div class="card mt-12" style="padding:16px 12px">
+        <div class="card-header" style="padding-left:4px">Submission Status</div>
+        <div class="text-muted" style="font-size:12px;padding:0 4px 10px">Predictions submitted / matches that day</div>
+        <div class="pp-table-wrap" style="box-shadow:none;border:none">
+          <table class="pp-table" id="submissionStatusTable"></table>
+        </div>
+      </div>
       <div class="card mt-12">
         <div class="card-header">Legend</div>
         <div class="pts-row"><span><strong>E</strong> — Exact score correct</span><span class="status-badge badge-correct">+3 pts</span></div>
@@ -371,6 +384,14 @@
       <button class="btn btn-primary btn-full" id="exportPredBtn" style="margin-top:8px" onclick="exportPredictionTableAsJpeg()">📷 Export Table as JPEG</button>
 
       <div class="section-title">Enter Results</div>
+      <div class="card">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Select date</label>
+          <select class="form-select" id="resultsDateSelect" onchange="renderAdminMatches()">
+            <option value="">— Choose a date —</option>
+          </select>
+        </div>
+      </div>
       <div id="adminMatchList"></div>
     </div>
   </div>
@@ -586,7 +607,19 @@ function enterApp() {
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('appScreen').style.display = '';
   document.getElementById('topbarName').textContent = currentUser.isAdmin ? '⚙ Admin' : currentUser.name;
-  if (currentUser.isAdmin) document.getElementById('adminTab').style.display = '';
+  if (currentUser.isAdmin) {
+    document.getElementById('adminTab').style.display = '';
+    // Default Player Predictions range to "today + tomorrow morning" window, same as Matches page.
+    const todayKey = getTodayKey();
+    const tomorrowKey = addDays(todayKey, 1);
+    const fromEl = document.getElementById('predDateFrom');
+    const toEl = document.getElementById('predDateTo');
+    if (fromEl) fromEl.value = todayKey;
+    if (toEl) toEl.value = tomorrowKey;
+    // Default Enter Results date selector to today as well.
+    const resultsDateEl = document.getElementById('resultsDateSelect');
+    if (resultsDateEl) resultsDateEl.value = todayKey;
+  }
 
   // Live listeners
   unsubMatches = onSnapshot(collection(db, 'matches'), snap => {
@@ -636,19 +669,21 @@ function getMatchDayKey(match) { return match.date; }
 
 // Returns today's date string (YYYY-MM-DD) in Bangkok time, independent of the device's local timezone.
 function getTodayKey() {
-  const now = new Date();
-  // Get UTC time in ms, then add Bangkok's fixed UTC+7 offset.
-  const bangkokMs = now.getTime() + (7 * 60 * 60 * 1000) + (now.getTimezoneOffset() * 60 * 1000);
-  const bkk = new Date(bangkokMs);
-  const y = bkk.getFullYear();
-  const m = String(bkk.getMonth() + 1).padStart(2, '0');
-  const d = String(bkk.getDate()).padStart(2, '0');
+  // now.getTime() is a true UTC instant (epoch ms), unaffected by device timezone.
+  // Add Bangkok's fixed UTC+7 offset, then read it back with UTC getters so the
+  // device's own local timezone is never re-applied on top.
+  const bkk = new Date(Date.now() + 7 * 60 * 60 * 1000);
+  const y = bkk.getUTCFullYear();
+  const m = String(bkk.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(bkk.getUTCDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
 }
 
 function addDays(dateKey, n) {
-  const d = new Date(dateKey + 'T00:00:00');
-  d.setDate(d.getDate() + n);
+  // Parse as UTC explicitly (the 'Z' suffix) and use UTC getters/setters throughout,
+  // so the device's local timezone never enters the calculation (fixes Bangkok-device bug).
+  const d = new Date(dateKey + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().split('T')[0];
 }
 
@@ -902,6 +937,54 @@ function renderLeaderboard() {
       <td class="col-pt">${p.pts}</td>
     </tr>`;
   }).join('');
+  renderSubmissionStatus();
+}
+
+// Submission status: rows = players, columns = calendar dates, cell = "submitted/total" for that date, color-coded.
+function renderSubmissionStatus() {
+  const table = document.getElementById('submissionStatusTable');
+  if (!table) return;
+
+  const allDayKeys = [...new Set(matches.map(m => m.date))].sort();
+  const playerList = Object.values(players).map(p => p.displayName).sort((a,b) => a.localeCompare(b));
+
+  if (!allDayKeys.length || !playerList.length) {
+    table.innerHTML = '<tbody><tr><td class="empty">No data yet.</td></tr></tbody>';
+    return;
+  }
+
+  // Show a 5-day rolling window: 2 days before today, today, and 2 days after (only dates that actually have matches).
+  const todayKey = getTodayKey();
+  const windowStart = addDays(todayKey, -1);
+  const windowEnd = addDays(todayKey, 3);
+  const dayKeys = allDayKeys.filter(key => key >= windowStart && key <= windowEnd);
+
+  if (!dayKeys.length) {
+    table.innerHTML = '<tbody><tr><td class="empty">No matches in this date range.</td></tr></tbody>';
+    return;
+  }
+
+  const headerHtml = `<tr><th class="pp-col-match">Player</th>${dayKeys.map(key => {
+    const d = new Date(key+'T12:00:00');
+    const label = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    return `<th class="ss-date-col">${label}</th>`;
+  }).join('')}</tr>`;
+
+  const bodyHtml = playerList.map(name => {
+    const isMe = name === currentUser.name;
+    const cells = dayKeys.map(key => {
+      const dayMatches = matches.filter(m => m.date === key);
+      const total = dayMatches.length;
+      const submitted = dayMatches.filter(m => m.predictions && m.predictions[name]).length;
+      let cls = 'ss-none';
+      if (submitted === total && total > 0) cls = 'ss-full';
+      else if (submitted > 0) cls = 'ss-partial';
+      return `<td class="ss-cell ${cls}${isMe?' ss-me':''}">${submitted}/${total}</td>`;
+    }).join('');
+    return `<tr><td class="pp-col-match">${name}${isMe?' <span class="you-tag">YOU</span>':''}</td>${cells}</tr>`;
+  }).join('');
+
+  table.innerHTML = `<thead>${headerHtml}</thead><tbody>${bodyHtml}</tbody>`;
 }
 
 // ── MY PREDICTIONS ──
@@ -940,10 +1023,37 @@ window.addMatch = async function() {
   showToast('Match added ✓');
 };
 
+function renderResultsDateOptions() {
+  const sel = document.getElementById('resultsDateSelect');
+  if (!sel) return;
+  const prevValue = sel.value;
+  const dayKeys = [...new Set(matches.map(m => m.date))].sort();
+  sel.innerHTML = dayKeys.map(key => {
+    const d = new Date(key + 'T12:00:00');
+    const label = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+    const total = matches.filter(m => m.date === key).length;
+    const done = matches.filter(m => m.date === key && m.result !== null && m.result !== undefined).length;
+    return `<option value="${key}">${label} (${done}/${total} entered)</option>`;
+  }).join('');
+  if (prevValue && dayKeys.includes(prevValue)) {
+    sel.value = prevValue;
+  } else if (dayKeys.includes(getTodayKey())) {
+    sel.value = getTodayKey();
+  } else if (dayKeys.length) {
+    sel.value = dayKeys[0];
+  }
+}
+
 function renderAdminMatches() {
+  renderResultsDateOptions();
   const el = document.getElementById('adminMatchList');
+  const sel = document.getElementById('resultsDateSelect');
+  const selectedDate = sel ? sel.value : '';
   if (!matches.length) { el.innerHTML='<div class="empty">No matches yet.</div>'; return; }
-  el.innerHTML = matches.map(m => {
+  const dayMatches = selectedDate ? matches.filter(m => m.date === selectedDate) : [];
+  if (!dayMatches.length) { el.innerHTML='<div class="empty">No matches on this date.</div>'; return; }
+  const sorted = [...dayMatches].sort((a,b) => a.time.localeCompare(b.time));
+  el.innerHTML = sorted.map(m => {
     const hasResult = m.result!==null&&m.result!==undefined;
     const resultHtml = hasResult
       ? `<div style="text-align:center;margin:8px 0"><span class="admin-badge">Result: ${m.result.home}–${m.result.away}</span> <button class="btn btn-secondary btn-sm" onclick="clearResult('${m.id}')">Edit</button></div>`
@@ -951,6 +1061,7 @@ function renderAdminMatches() {
     return `<div class="match-card"><div class="match-meta"><span class="match-stage">${m.stage}</span><span class="text-muted" style="font-size:12px">${m.date} · ${m.time}</span></div><div class="match-teams"><span class="team-name">${m.home}</span><span class="match-vs">vs</span><span class="team-name">${m.away}</span></div>${resultHtml}<div style="text-align:right;margin-top:8px"><button class="btn btn-secondary btn-sm" style="color:var(--red);border-color:var(--red)" onclick="deleteMatch('${m.id}')">Delete</button></div></div>`;
   }).join('');
 }
+window.renderAdminMatches = renderAdminMatches;
 
 // ── ADMIN: PLAYER PREDICTIONS VIEWER (filtered by date range + stage, grouped by player) ──
 function renderPredictionMatchOptions() {
