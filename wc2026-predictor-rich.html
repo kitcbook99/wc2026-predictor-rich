@@ -39,11 +39,6 @@
   .score-input::-webkit-outer-spin-button,.score-input::-webkit-inner-spin-button{-webkit-appearance:none;}
   .score-input:focus{outline:none;border-color:var(--accent);}
   .score-dash{font-size:22px;font-weight:300;color:var(--text-muted);}
-  .knockout-winner{margin-bottom:12px;}
-  .knockout-label{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;text-align:center;}
-  .winner-btns{display:flex;gap:8px;}
-  .winner-btn{flex:1;padding:8px 4px;font-size:13px;font-weight:600;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;transition:all 0.15s;font-family:inherit;text-align:center;color:var(--text);}
-  .winner-btn.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
   .predict-status{display:flex;align-items:center;justify-content:space-between;font-size:13px;}
   .status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:12px;font-weight:500;}
   .badge-saved{background:var(--green-light);color:var(--green);}
@@ -289,16 +284,21 @@
       </div>
       <div class="card mt-12">
         <div class="card-header">Legend</div>
-        <div class="pts-row"><span><strong>E</strong> — Exact score correct</span><span class="status-badge badge-correct">+3 pts</span></div>
-        <div class="pts-row"><span><strong>R</strong> — Result/winner correct only</span><span class="status-badge badge-partial">+1 pt</span></div>
+        <div class="pts-row"><span><strong>E</strong> — Exact score correct</span><span class="status-badge badge-correct">+3/4/5/7 pts</span></div>
+        <div class="pts-row"><span><strong>R</strong> — Result correct only</span><span class="status-badge badge-partial">+1/2/3/4 pts</span></div>
         <div class="pts-row"><span><strong>W</strong> — Wrong prediction</span><span class="status-badge badge-locked">0 pts</span></div>
       </div>
       <div class="card mt-12">
         <div class="card-header">Full Scoring Rules</div>
-        <div class="pts-row"><span>Exact score (90 min)</span><span class="status-badge badge-correct">+3 pts</span></div>
-        <div class="pts-row"><span>Correct result only</span><span class="status-badge badge-partial">+1 pt</span></div>
-        <div class="pts-row"><span>Knockout winner (bonus)</span><span class="status-badge badge-pts">+1 pt</span></div>
-        <div class="pts-row"><span>Wrong result &amp; score</span><span class="status-badge badge-locked">0 pts</span></div>
+        <div class="pts-row"><span>Group Stage — Exact score</span><span class="status-badge badge-correct">+3 pts</span></div>
+        <div class="pts-row"><span>Group Stage — Correct result only</span><span class="status-badge badge-partial">+1 pt</span></div>
+        <div class="pts-row"><span>Round of 32 / 16 — Exact score</span><span class="status-badge badge-correct">+4 pts</span></div>
+        <div class="pts-row"><span>Round of 32 / 16 — Correct result only</span><span class="status-badge badge-partial">+2 pts</span></div>
+        <div class="pts-row"><span>QF / SF / 3rd Place — Exact score</span><span class="status-badge badge-correct">+5 pts</span></div>
+        <div class="pts-row"><span>QF / SF / 3rd Place — Correct result only</span><span class="status-badge badge-partial">+3 pts</span></div>
+        <div class="pts-row"><span>Final — Exact score</span><span class="status-badge badge-correct">+7 pts</span></div>
+        <div class="pts-row"><span>Final — Correct result only</span><span class="status-badge badge-partial">+4 pts</span></div>
+        <div class="pts-row"><span>Any stage — Wrong prediction</span><span class="status-badge badge-locked">0 pts</span></div>
       </div>
     </div>
     <div id="page-myPredictions" class="page">
@@ -773,7 +773,6 @@ function isPredictionLocked(match) {
 function isKnockout(stage) { return KNOCKOUT_STAGES.includes(stage); }
 
 // ── MATCHES PAGE ──
-const tempWinners = {};
 
 function renderMatches() {
   const el = document.getElementById('matchesList');
@@ -815,14 +814,14 @@ function renderMatchCard(match) {
   const locked = isPredictionLocked(match);
   const pred = match.predictions ? match.predictions[currentUser.name] : null;
   const hasResult = match.result !== null && match.result !== undefined;
-  const isKO = isKnockout(match.stage);
+  const { exact, result } = getStagePoints(match.stage);
   let statusHtml = '';
 
   if (hasResult) {
     const pts = calcPoints(match, currentUser.name);
     const pStr = pred ? `${pred.home}–${pred.away}` : '?–?';
-    let bc = pts===0?'badge-wrong':pts===1?'badge-partial':'badge-correct';
-    let bt = pts===0?'0 pts':pts===1?'+1 pt':`+${pts} pts`;
+    const bc = pts===0?'badge-wrong':pts===result?'badge-partial':'badge-correct';
+    const bt = pts===0?'0 pts':`+${pts} pts`;
     statusHtml = `<div class="predict-status"><span class="text-muted">Your pick: <strong>${pStr}</strong></span><span class="status-badge ${bc}">${bt}</span></div>`;
   } else if (locked) {
     const pStr = pred ? `${pred.home}–${pred.away}` : 'No pick';
@@ -830,28 +829,15 @@ function renderMatchCard(match) {
   } else {
     const ph = pred!=null ? pred.home : '';
     const pa = pred!=null ? pred.away : '';
-    const wv = pred ? (pred.winner||'') : '';
-    let winnerHtml = '';
-    if (isKO) {
-      const selH = (tempWinners[match.id]||wv)===match.home?'selected':'';
-      const selA = (tempWinners[match.id]||wv)===match.away?'selected':'';
-      winnerHtml = `<div class="knockout-winner"><div class="knockout-label">⭐ Predict Match Winner (+1 bonus)</div><div class="winner-btns"><button class="winner-btn ${selH}" onclick="selectWinner('${match.id}','${match.home}')">${match.home}</button><button class="winner-btn ${selA}" onclick="selectWinner('${match.id}','${match.away}')">${match.away}</button></div></div>`;
-    }
-    statusHtml = `<div class="score-inputs"><input class="score-input" type="number" min="0" max="30" id="ph-${match.id}" value="${ph}" placeholder="0"><span class="score-dash">—</span><input class="score-input" type="number" min="0" max="30" id="pa-${match.id}" value="${pa}" placeholder="0"></div>${winnerHtml}<button class="btn btn-primary btn-full btn-sm" onclick="savePrediction('${match.id}')">Save Prediction</button>${pred?'<div class="text-center text-muted mt-8" style="font-size:12px">✓ Saved — you can update until lock</div>':''}`;
+    statusHtml = `<div class="score-inputs"><input class="score-input" type="number" min="0" max="30" id="ph-${match.id}" value="${ph}" placeholder="0"><span class="score-dash">—</span><input class="score-input" type="number" min="0" max="30" id="pa-${match.id}" value="${pa}" placeholder="0"></div><button class="btn btn-primary btn-full btn-sm" onclick="savePrediction('${match.id}')">Save Prediction</button>${pred?'<div class="text-center text-muted mt-8" style="font-size:12px">✓ Saved — you can update until lock</div>':''}`;
   }
 
   const resultStr = hasResult
-    ? `<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:24px;font-weight:700">${match.result.home}–${match.result.away}</span>`
+    ? `<span style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700">${match.result.home}–${match.result.away}</span>`
     : `<span class="text-muted" style="font-size:13px">${match.time}</span>`;
 
   return `<div class="match-card" id="mcard-${match.id}"><div class="match-meta"><span class="match-stage">${match.stage}</span>${resultStr}</div><div class="match-teams"><span class="team-name">${match.home}</span><span class="match-vs">vs</span><span class="team-name">${match.away}</span></div>${statusHtml}</div>`;
 }
-
-window.selectWinner = function(matchId, team) {
-  tempWinners[matchId] = team;
-  const card = document.getElementById('mcard-'+matchId);
-  if (card) card.querySelectorAll('.winner-btn').forEach(b => b.classList.toggle('selected', b.textContent===team));
-};
 
 window.savePrediction = async function(matchId) {
   if (currentUser.isAdmin) { showToast('Admin cannot submit predictions'); return; }
@@ -861,33 +847,46 @@ window.savePrediction = async function(matchId) {
   const hVal = document.getElementById('ph-'+matchId)?.value;
   const aVal = document.getElementById('pa-'+matchId)?.value;
   if (hVal===''||aVal==='') { showToast('Enter both scores'); return; }
-  const isKO = isKnockout(m.stage);
-  const winner = tempWinners[matchId] || (m.predictions&&m.predictions[currentUser.name]?m.predictions[currentUser.name].winner:'');
-  if (isKO && !winner) { showToast('Please select the match winner'); return; }
-  const predData = { home: parseInt(hVal), away: parseInt(aVal), winner: isKO?winner:'' };
+  const predData = { home: parseInt(hVal), away: parseInt(aVal) };
   await updateDoc(doc(db,'matches',matchId), { [`predictions.${currentUser.name}`]: predData });
   showToast('Prediction saved ✓');
 };
 
 // ── SCORING ──
+// Stage-based scoring table:
+// Group Stage:   E=3, R=1, W=0
+// Round of 32:   E=4, R=2, W=0
+// Round of 16:   E=4, R=2, W=0
+// Quarter-final: E=5, R=3, W=0
+// Semi-final:    E=5, R=3, W=0
+// 3rd Place:     E=5, R=3, W=0
+// Final:         E=7, R=4, W=0
+// No knockout winner bonus.
+function getStagePoints(stage) {
+  switch (stage) {
+    case 'Round of 32':   return { exact: 4, result: 2 };
+    case 'Round of 16':   return { exact: 4, result: 2 };
+    case 'Quarter-final': return { exact: 5, result: 3 };
+    case 'Semi-final':    return { exact: 5, result: 3 };
+    case '3rd Place':     return { exact: 5, result: 3 };
+    case 'Final':         return { exact: 7, result: 4 };
+    default:              return { exact: 3, result: 1 }; // Group Stage
+  }
+}
+
 function calcPoints(match, playerName) {
   if (!match.result) return 0;
   const pred = match.predictions ? match.predictions[playerName] : null;
   if (!pred) return 0;
   const r = match.result;
-  let pts = 0;
-  if (pred.home===r.home && pred.away===r.away) {
-    pts += 3;
-  } else {
-    const res = r.home>r.away?'H':r.home<r.away?'A':'D';
-    const pre = pred.home>pred.away?'H':pred.home<pred.away?'A':'D';
-    if (res===pre) pts += 1;
+  const { exact, result } = getStagePoints(match.stage);
+  if (pred.home === r.home && pred.away === r.away) {
+    return exact;
   }
-  if (isKnockout(match.stage) && pred.winner) {
-    const winner = r.home>r.away?match.home:r.away>r.home?match.away:'';
-    if (winner && pred.winner===winner) pts += 1;
-  }
-  return pts;
+  const res = r.home > r.away ? 'H' : r.home < r.away ? 'A' : 'D';
+  const pre = pred.home > pred.away ? 'H' : pred.home < pred.away ? 'A' : 'D';
+  if (res === pre) return result;
+  return 0;
 }
 
 function calcTotal(playerName) {
@@ -1000,9 +999,10 @@ function renderMyPredictions() {
       const pred = m.predictions[currentUser.name];
       const hasResult = m.result!==null&&m.result!==undefined;
       const pts = hasResult?calcPoints(m,currentUser.name):null;
-      let badge = pts===null?'':`<span class="status-badge ${pts===0?'badge-wrong':pts===1?'badge-partial':'badge-correct'}">${pts===0?'0 pts':pts===1?'+1 pt':'+'+pts+' pts'}</span>`;
+      const { result: rPts } = getStagePoints(m.stage);
+      let badge = pts===null?'':`<span class="status-badge ${pts===0?'badge-wrong':pts===rPts?'badge-partial':'badge-correct'}">${pts===0?'0 pts':'+'+pts+' pts'}</span>`;
       const resultStr = hasResult?`Result: <strong>${m.result.home}–${m.result.away}</strong>`:'Awaiting result';
-      html += `<div class="match-card"><div class="match-meta"><span class="match-stage">${m.stage}</span>${badge}</div><div class="match-teams"><span class="team-name">${m.home}</span><span class="match-vs">vs</span><span class="team-name">${m.away}</span></div><div class="predict-status"><span class="text-muted">Your pick: <strong>${pred.home}–${pred.away}</strong>${pred.winner?` · Winner: ${pred.winner}`:''}</span><span class="text-muted" style="font-size:12px">${resultStr}</span></div></div>`;
+      html += `<div class="match-card"><div class="match-meta"><span class="match-stage">${m.stage}</span>${badge}</div><div class="match-teams"><span class="team-name">${m.home}</span><span class="match-vs">vs</span><span class="team-name">${m.away}</span></div><div class="predict-status"><span class="text-muted">Your pick: <strong>${pred.home}–${pred.away}</strong></span><span class="text-muted" style="font-size:12px">${resultStr}</span></div></div>`;
     });
   }
   el.innerHTML = html;
@@ -1126,11 +1126,10 @@ function renderPredictionSummary() {
       let ptsHtml = '';
       if (hasResult) {
         const pts = calcPoints(m, name);
-        const cls = pts===0?'pts-wrong':pts===1?'pts-partial':'pts-exact';
-        const label = pts===0?'0 pt':pts===1?'+1 pt':`+${pts} pt`;
+        const { result: rPts } = getStagePoints(m.stage);
+        const cls = pts===0?'pts-wrong':pts===rPts?'pts-partial':'pts-exact';
+        const label = pts===0?'0 pt':`+${pts} pt`;
         ptsHtml = `<span class="pp-cell-pts ${cls}">${label}</span>`;
-      } else if (pred.winner) {
-        ptsHtml = `<span class="pp-cell-pts" style="color:var(--text-muted)">→ ${pred.winner.slice(0,3).toUpperCase()}</span>`;
       }
       return `<td><span class="pp-cell-score">${pred.home}–${pred.away}</span>${ptsHtml}</td>`;
     }).join('');
