@@ -318,6 +318,7 @@
           <label class="form-label">Admin Password</label>
           <input class="form-input" id="adminPwdDisplay" readonly value="KITCADMIN99">
         </div>
+        <button class="btn btn-primary btn-full" onclick="addRound32Matches()">➕ Add Round of 32 Matches to Firebase</button>
       </div>
       <div class="section-title">Manage Players</div>
       <div class="card">
@@ -509,6 +510,23 @@ function defaultMatches() {
     {id:'m70', stage:'Group Stage',home:'DR Congo',    away:'Uzbekistan',          date:'2026-06-28',time:'06:30'},
     {id:'m71', stage:'Group Stage',home:'Algeria',     away:'Austria',             date:'2026-06-28',time:'09:00'},
     {id:'m72', stage:'Group Stage',home:'Jordan',      away:'Argentina',           date:'2026-06-28',time:'09:00'},
+    // ── Round of 32 (Bangkok / ICT time) ──
+    {id:'m73', stage:'Round of 32', home:'South Africa',  away:'Canada',               date:'2026-06-29', time:'02:00'},
+    {id:'m74', stage:'Round of 32', home:'Brazil',         away:'Japan',                date:'2026-06-30', time:'00:00'},
+    {id:'m75', stage:'Round of 32', home:'Germany',        away:'Paraguay',             date:'2026-06-30', time:'03:30'},
+    {id:'m76', stage:'Round of 32', home:'Netherlands',    away:'Morocco',              date:'2026-06-30', time:'08:00'},
+    {id:'m77', stage:'Round of 32', home:'Ivory Coast',    away:'Norway',               date:'2026-07-01', time:'00:00'},
+    {id:'m78', stage:'Round of 32', home:'France',         away:'Sweden',               date:'2026-07-01', time:'04:00'},
+    {id:'m79', stage:'Round of 32', home:'Mexico',         away:'Ecuador',              date:'2026-07-01', time:'08:00'},
+    {id:'m80', stage:'Round of 32', home:'England',        away:'DR Congo',             date:'2026-07-01', time:'23:00'},
+    {id:'m81', stage:'Round of 32', home:'Belgium',        away:'Senegal',              date:'2026-07-02', time:'03:00'},
+    {id:'m82', stage:'Round of 32', home:'USA',            away:'Bosnia & Herzegovina', date:'2026-07-02', time:'07:00'},
+    {id:'m83', stage:'Round of 32', home:'Spain',          away:'Austria',              date:'2026-07-03', time:'02:00'},
+    {id:'m84', stage:'Round of 32', home:'Portugal',       away:'Croatia',              date:'2026-07-03', time:'06:00'},
+    {id:'m85', stage:'Round of 32', home:'Switzerland',    away:'Algeria',              date:'2026-07-03', time:'10:00'},
+    {id:'m86', stage:'Round of 32', home:'Australia',      away:'Egypt',                date:'2026-07-04', time:'01:00'},
+    {id:'m87', stage:'Round of 32', home:'Argentina',      away:'Cape Verde',           date:'2026-07-04', time:'05:00'},
+    {id:'m88', stage:'Round of 32', home:'Colombia',       away:'Ghana',                date:'2026-07-04', time:'08:30'},
   ];
 }
 
@@ -1222,6 +1240,20 @@ window.deleteMatch = async function(matchId) {
 
 window.copyGroupCode = function() {
   navigator.clipboard.writeText(GROUP_CODE).then(() => showToast('Code copied! Share: WC2026'));
+};
+
+window.addRound32Matches = async function() {
+  if (!confirm('Add all 16 Round of 32 matches to Firebase? Existing matches with the same ID will be skipped.')) return;
+  const r32 = defaultMatches().filter(m => m.stage === 'Round of 32');
+  let added = 0, skipped = 0;
+  for (const m of r32) {
+    const ref = doc(db, 'matches', m.id);
+    const snap = await getDoc(ref);
+    if (snap.exists()) { skipped++; continue; }
+    await setDoc(ref, { ...m });
+    added++;
+  }
+  showToast(`R32 added: ${added} new, ${skipped} already existed`);
 };
 
 // ── ADMIN: MANAGE PLAYERS ──
