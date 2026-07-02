@@ -939,7 +939,7 @@ function renderLeaderboard() {
   const el = document.getElementById('leaderboardList');
   const list = Object.values(players)
     .map(p => ({ name: p.displayName, pts: calcTotal(p.displayName), stats: calcStats(p.displayName) }))
-    .sort((a,b) => b.pts-a.pts);
+    .sort((a,b) => b.pts - a.pts || b.stats.exact - a.stats.exact || b.stats.resultOnly - a.stats.resultOnly);
   if (!list.length) { el.innerHTML='<tr><td colspan="6" class="empty">No players yet.</td></tr>'; return; }
   el.innerHTML = list.map((p,i) => {
     const rank = i+1;
