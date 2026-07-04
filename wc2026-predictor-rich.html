@@ -319,6 +319,7 @@
           <input class="form-input" id="adminPwdDisplay" readonly value="KITCADMIN99">
         </div>
         <button class="btn btn-primary btn-full" onclick="addRound32Matches()">➕ Add Round of 32 Matches to Firebase</button>
+        <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="addRound16Matches()">➕ Add Round of 16 Matches to Firebase</button>
       </div>
       <div class="section-title">Manage Players</div>
       <div class="card">
@@ -527,6 +528,15 @@ function defaultMatches() {
     {id:'m86', stage:'Round of 32', home:'Australia',      away:'Egypt',                date:'2026-07-04', time:'01:00'},
     {id:'m87', stage:'Round of 32', home:'Argentina',      away:'Cape Verde',           date:'2026-07-04', time:'05:00'},
     {id:'m88', stage:'Round of 32', home:'Colombia',       away:'Ghana',                date:'2026-07-04', time:'08:30'},
+    // ── Round of 16 (Bangkok / ICT time) ──
+    {id:'m89', stage:'Round of 16', home:'Canada',      away:'Morocco',   date:'2026-07-05', time:'00:00'},
+    {id:'m90', stage:'Round of 16', home:'Paraguay',    away:'France',    date:'2026-07-05', time:'04:00'},
+    {id:'m91', stage:'Round of 16', home:'Brazil',      away:'Norway',    date:'2026-07-06', time:'03:00'},
+    {id:'m92', stage:'Round of 16', home:'Mexico',      away:'England',   date:'2026-07-06', time:'07:00'},
+    {id:'m93', stage:'Round of 16', home:'Portugal',    away:'Spain',     date:'2026-07-07', time:'02:00'},
+    {id:'m94', stage:'Round of 16', home:'USA',         away:'Belgium',   date:'2026-07-07', time:'07:00'},
+    {id:'m95', stage:'Round of 16', home:'Egypt',       away:'Argentina', date:'2026-07-07', time:'23:00'},
+    {id:'m96', stage:'Round of 16', home:'Switzerland', away:'Colombia',  date:'2026-07-08', time:'03:00'},
   ];
 }
 
@@ -1254,6 +1264,20 @@ window.addRound32Matches = async function() {
     added++;
   }
   showToast(`R32 added: ${added} new, ${skipped} already existed`);
+};
+
+window.addRound16Matches = async function() {
+  if (!confirm('Add all 8 Round of 16 matches to Firebase? Existing matches with the same ID will be skipped.')) return;
+  const r16 = defaultMatches().filter(m => m.stage === 'Round of 16');
+  let added = 0, skipped = 0;
+  for (const m of r16) {
+    const ref = doc(db, 'matches', m.id);
+    const snap = await getDoc(ref);
+    if (snap.exists()) { skipped++; continue; }
+    await setDoc(ref, { ...m });
+    added++;
+  }
+  showToast(`R16 added: ${added} new, ${skipped} already existed`);
 };
 
 // ── ADMIN: MANAGE PLAYERS ──
