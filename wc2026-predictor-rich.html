@@ -321,6 +321,7 @@
         <button class="btn btn-primary btn-full" onclick="addRound32Matches()">➕ Add Round of 32 Matches to Firebase</button>
         <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="addRound16Matches()">➕ Add Round of 16 Matches to Firebase</button>
         <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="addQuarterFinalMatches()">➕ Add Quarter-final Matches to Firebase</button>
+        <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="addSemiFinalMatches()">➕ Add Semi-final Matches to Firebase</button>
       </div>
       <div class="section-title">Manage Players</div>
       <div class="card">
@@ -543,6 +544,9 @@ function defaultMatches() {
     {id:'m98',  stage:'Quarter-final', home:'Belgium',   away:'Spain',        date:'2026-07-11', time:'02:00'},
     {id:'m99',  stage:'Quarter-final', home:'Norway',    away:'England',      date:'2026-07-12', time:'04:00'},
     {id:'m100', stage:'Quarter-final', home:'Argentina', away:'Switzerland',  date:'2026-07-12', time:'08:00'},
+    // ── Semi-finals (Bangkok / ICT time) ──
+    {id:'m101', stage:'Semi-final', home:'France',  away:'Spain',     date:'2026-07-15', time:'02:00'},
+    {id:'m102', stage:'Semi-final', home:'England', away:'Argentina', date:'2026-07-16', time:'02:00'},
   ];
 }
 
@@ -1298,6 +1302,20 @@ window.addQuarterFinalMatches = async function() {
     added++;
   }
   showToast(`QF added: ${added} new, ${skipped} already existed`);
+};
+
+window.addSemiFinalMatches = async function() {
+  if (!confirm('Add both Semi-final matches to Firebase? Existing matches with the same ID will be skipped.')) return;
+  const sf = defaultMatches().filter(m => m.stage === 'Semi-final');
+  let added = 0, skipped = 0;
+  for (const m of sf) {
+    const ref = doc(db, 'matches', m.id);
+    const snap = await getDoc(ref);
+    if (snap.exists()) { skipped++; continue; }
+    await setDoc(ref, { ...m });
+    added++;
+  }
+  showToast(`SF added: ${added} new, ${skipped} already existed`);
 };
 
 // ── ADMIN: MANAGE PLAYERS ──
